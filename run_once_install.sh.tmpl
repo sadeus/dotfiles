@@ -1,0 +1,130 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+set -eu
+
+# Is Windows Subsystem of Linux (WSL)?
+IS_WSL=0
+if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+    IS_WSL=1
+fi
+
+sudo apt-get update
+
+# pyenv build tools. Needed to build Python
+sudo apt install -y \
+        build-essential \
+        libssl-dev \
+        zlib1g-dev \
+        libbz2-dev \
+        libreadline-dev \
+        libsqlite3-dev \
+        llvm \
+        libncurses5-dev \
+        libncursesw5-dev \
+        xz-utils \
+        tk-dev \
+        libffi-dev \
+        liblzma-dev \
+        python3-openssl \
+        wget \
+        curl \
+        tmux \
+        zsh \
+        p7zip \
+        nmap \
+        socat \
+        exfat-utils \
+        neovim \
+        python3-neovim \
+        docker.io
+
+if [! $IS_WSL]; then
+    # Add here packages for desktop Ubuntu
+    sudo apt install -y \
+        keepassxc \
+        vlc
+
+    sudo snap install --classic code
+fi
+
+# pyenv
+if ! [ -d ~/.pyenv ]; then
+    git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
+    git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+fi
+
+# rustup
+[ -x $(command -v rustup) ] && curl https://sh.rustup.rs -sSf | sh
+
+{{ else if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+# Set your hostname
+HOSTNAME=voyager
+
+# Close any open System Preferences panes, to prevent them from overriding
+# settings we’re about to change
+osascript -e 'tell application "System Preferences" to quit'
+
+# Set hostname
+sudo scutil --set HostName $HOSTNAME
+
+sudo defaults write com.apple.LaunchServices LSQuarantine -bool false
+
+# Require password immediately after sleep or screen saver begins
+sudo defaults write com.apple.screensaver askForPassword -int 1
+sudo defaults write com.apple.screensaver askForPasswordDelay -int 0
+
+# Avoid creating .DS_STORE in usb and network drives
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+# Show the ~/Library folder
+chflags nohidden ~/Library
+
+# Don’t display the annoying prompt when quitting iTerm
+defaults write com.googlecode.iterm2 PromptOnQuit -bool false
+
+# Prevent Photos from opening automatically when devices are plugged in
+defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+
+# Enable the debug menu in Disk Utility
+defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
+defaults write com.apple.DiskUtility advanced-image-options -bool true
+
+# Disable Dashboard
+defaults write com.apple.dashboard mcx-disabled -bool true
+
+# Install packages with homebrew
+## Upgrade any already-installed formulae.
+brew upgrade
+
+## Caskroom
+brew tap caskroom/cask
+
+## Install formulas
+brew install zsh\
+    vim \
+    grep \
+    openssh \
+    nmap \
+    wget \
+    curl \
+    socat \
+    git \
+    git-lfs \
+    p7zip \
+    pyenv \
+    pyenv-virtualenv \
+    firefox \
+    iterm2 \
+    spotify \
+    qbittorrent \
+    virtualbox \
+    vlc
+
+## Remove outdated versions from the cellar.
+brew cleanup
+
+# rustup
+[ -x $(command -v rustup) ] && curl https://sh.rustup.rs -sSf | sh
+{{ end -}}

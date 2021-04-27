@@ -1,0 +1,7 @@
+source $HOME/.zsh.d/env.zsh
+source $HOME/.zsh.d/config.zsh
+source $HOME/.zsh.d/alias.zsh
+source $HOME/.zsh.d/functions.zsh
+source $HOME/.zsh.d/oh-my-zsh.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

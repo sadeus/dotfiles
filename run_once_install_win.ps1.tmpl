@@ -1,0 +1,11 @@
+{{ if eq .chezmoi.os "win" -}}
+choco install -y vim `
+                git `
+                neovim `
+                python3 `
+                openssh `
+                7zip `
+                smplayer `
+                firefox `
+                keepassxc
+{{ end -}}
