@@ -12,12 +12,12 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 PATH="$HOME/.cargo/bin:$PATH"
 
 #pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-if type "pyenv" > /dev/null; then
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"  # Added pyenv-virtualenv
-fi
+# export PYENV_ROOT="$HOME/.pyenv"
+# export PATH="$PYENV_ROOT/bin:$PATH"
+# if type "pyenv" > /dev/null; then
+#     eval "$(pyenv init -)"
+#     eval "$(pyenv virtualenv-init -)"  # Added pyenv-virtualenv
+# fi
 
 #jEnv
 export PATH="$HOME/.jenv/bin:$PATH"
